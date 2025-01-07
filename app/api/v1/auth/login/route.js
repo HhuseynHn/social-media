@@ -4,6 +4,7 @@ import { dbConnect } from "@/config/database-connect";
 import { NextResponse } from "next/server";
 import userModel from "@/model/user-model";
 import * as bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 dbConnect();
 export async function POST(request) {
   try {
@@ -12,30 +13,44 @@ export async function POST(request) {
       email: data.email,
     });
 
-    if (find) {
+    if (!find) {
       return NextResponse.json(
         {
           success: false,
-          message: "This email already available",
+          message: "This email isn't avialable, please register",
         },
-        { status: 409 }
+        { status: 404 }
       );
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(data.password, salt);
+    const isMacth = await bcrypt.compare(data.password, find.password);
+    if (!isMacth) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Password is wrong",
+        },
+        { status: 401 }
+      );
+    }
+    const payload = {
+      id: find._id,
+      email: find.email,
+    };
 
-    const saveUser = await userModel.create({
-      ...data,
-      password: passwordHash,
-    });
+    const secret = "social_media_secret"; // sign
+    const time = {
+      expiresIn: "2h",
+    };
+    const token = jwt.sign(payload, secret, time); // token hazrlyr
 
     return NextResponse.json(
       {
         success: true,
-        message: "User successfully registered",
+        message: "User successfully login",
+        token,
       },
-      { status: 201 }
+      { status: 200 }
     );
   } catch (error) {
     console.error("Error in registration:", error);

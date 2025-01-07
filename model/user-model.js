@@ -25,11 +25,8 @@ const userSchema = new Schema(
       default: 0,
     },
   },
-  {
-    collation: "users",
-    timestamps: true,
-  }
+  { collation: { locale: "en_US", strength: 1 } }
 );
 
-const userModel = mongoose.model("User", userSchema);
+const userModel = mongoose.models.User || mongoose.model("User", userSchema);
 export default userModel;
