@@ -15,14 +15,10 @@ const postSchema = new Schema(
       ref: "User",
     },
   },
-  {
-    collation: "posts",
-    timestamps: true,
-  }
+  { collation: { locale: "en_US", strength: 1 } }
 );
 
-const postModel = mongoose.postModel.Post || mongoose.postModel("Post", postSchema);
+const postModel = mongoose.models.Post || mongoose.model("Post", postSchema);
 export default postModel;
 
-// const postModel = mongoose.model("Post", postSchema);
-// export default postModel;
+

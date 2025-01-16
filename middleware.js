@@ -1,14 +1,9 @@
 /** @format */
 
+import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 
-export const config = {
-  runtime: "nodejs",
-  matcher: ["/api/v1/hello"],
-};
-
-export function middleware(request) {
+export async function middleware(request) {
   const token = request.headers.get("authorization");
 
   if (!token) {
@@ -20,10 +15,21 @@ export function middleware(request) {
       { status: 401 }
     );
   }
-  console.log("roken", token);
+
   try {
-    const payload = jwt.verify(token, "social_media_secret");
-    return NextResponse.next();
+    const { payload } = await jwtVerify(token, secret);
+    console.log("Payload - ", payload.id);
+
+    // Yeni başlıq əlavə edin
+    const newHeaders = new Headers(request.headers);
+    newHeaders.set("user-id", payload.id);
+
+    // Başlıq ilə yeni sorğu yaradın
+    const modifiedRequest = new Request(request, {
+      headers: newHeaders,
+    });
+
+    return NextResponse.next({ request: modifiedRequest });
   } catch (error) {
     console.log("Mesg: ", error.message);
     return NextResponse.json(
@@ -35,7 +41,7 @@ export function middleware(request) {
     );
   }
 }
-// export const config = {
-// };
-
-//only hello
+export const config = {
+  runtime: "nodejs", // Keep the edge runtime
+  matcher: ["/api/v1/hello"],
+};
