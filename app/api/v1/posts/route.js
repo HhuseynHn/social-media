@@ -26,10 +26,10 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const userId = request.headers.get("user-id");
-    console.log("user-id", userId);
+    const user = request.headers.get("user-id");
+
     const data = await request.json();
-    const savedPost = await postModel.create(data);
+    const savedPost = await postModel.create({ ...data, user });
 
     return NextResponse.json({
       success: true,
