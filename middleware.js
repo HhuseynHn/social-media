@@ -20,11 +20,11 @@ export async function middleware(request) {
   try {
     const { payload } = await jwtVerify(token, secret);
 
-    // Yeni başlıq əlavə edin
+    // Add new header
     const newHeaders = new Headers(request.headers);
     newHeaders.set("user-id", payload.id);
 
-    // Başlıq ilə yeni sorğu yaradın
+    // To create new request with header
     const modifiedRequest = new Request(request, {
       headers: newHeaders,
     });
@@ -41,7 +41,14 @@ export async function middleware(request) {
     );
   }
 }
+// export const config = {
+//   runtime: "nodejs", // Keep the edge runtime
+//   matcher: ["/api/v1/posts*", "/api/v1/posts/:id", "/api/v1/comments"], // id dinamic
+// };
+
 export const config = {
-  runtime: "nodejs", // Keep the edge runtime
-  matcher: ["/api/v1/posts"],
+  matcher: [
+    "/api/v1/posts", // Matches /api/v1/posts
+    "/api/v1/posts/:path*", // Matches dynamic routes like /api/v1/posts/something
+  ],
 };

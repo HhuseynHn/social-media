@@ -9,10 +9,11 @@ dbConnect();
 export async function POST(request) {
   try {
     const data = await request.json();
+    console.log("DATA =", data);
     const find = await userModel.findOne({
       email: data.email,
     });
-
+    console.log("find=", find);
     if (!find) {
       return NextResponse.json(
         {
@@ -42,7 +43,7 @@ export async function POST(request) {
     const time = {
       expiresIn: "2h",
     };
-    const token = jwt.sign(payload, secret, time); // token hazrlyr
+    const token = jwt.sign(payload, secret, time); // for prapare jwt token
 
     return NextResponse.json(
       {

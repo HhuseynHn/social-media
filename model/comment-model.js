@@ -20,10 +20,11 @@ const commentSchema = new Schema(
     },
   },
   {
-    collation: "comment",
-    timestamps: true,
+    collation: { locale: "en_US", strength: 1 },
   }
 );
 
-const commentModel = mongoose.model("Comment", commentSchema);
+const commentModel =
+  mongoose.models.Comment || mongoose.model("Comment", commentSchema);
+
 export default commentModel;

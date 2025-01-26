@@ -4,19 +4,123 @@ import postModel from "@/model/post-model";
 
 import { NextResponse } from "next/server";
 dbConnect();
+// Get only one post
 export async function GET(request, { params }) {
   const id = (await params).id;
   try {
-    const data = await postModel.findOne({
-      _id: id,
-    });
+    const data = await postModel
+      .findOne({
+        _id: id,
+      })
+      .populate({
+        path: "user",
+        select: "-password -__v -email",
+      });
+    if (!data) {
+      return NextResponse.json(
+        {
+          success: false,
+          messagge: "Post not found",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
 
-    console.log("ID =>", id);
-    console.log("DATA", data);
     return NextResponse.json({
       success: true,
       messagge: "Fetched successfully",
       data: data,
+    });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      {
+        success: false,
+        details: error,
+        error: "Error to be Happen",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// Delete post
+export async function DELETE(request, { params }) {
+  const id = (await params).id;
+  const user = request.headers.get("user-id");
+
+  try {
+    const data = await postModel.findOne({
+      _id: id,
+      user: {
+        _id: user,
+      },
+    });
+
+    if (!data) {
+      return NextResponse.json(
+        {
+          success: false,
+          messagge: "Post not found",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+    await postModel.findByIdAndDelete(id);
+
+    return NextResponse.json({
+      success: true,
+      messagge: "Delete successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      {
+        success: false,
+        details: error,
+        error: "Error to be Happen",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// Update post
+export async function PATCH(request, { params }) {
+  const id = (await params).id;
+  const user = request.headers.get("user-id");
+  const body = await request.json();
+  try {
+    const data = await postModel.findOne({
+      _id: id,
+      user: {
+        _id: user,
+      },
+    });
+
+    if (!data) {
+      return NextResponse.json(
+        {
+          success: false,
+          messagge: "Post not found",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    const updateData = await postModel.findByIdAndUpdate(id, body, {
+      new: true,
+    });
+    return NextResponse.json({
+      success: true,
+      messagge: "Update successfully",
+      data: updateData,
     });
   } catch (error) {
     console.log(error);

@@ -3,9 +3,15 @@ import { dbConnect } from "@/config/database-connect";
 import postModel from "@/model/post-model";
 import { NextResponse } from "next/server";
 dbConnect();
+
+// Get All Posts
 export async function GET() {
   try {
-    const data = await postModel.find({});
+    const data = await postModel.find({}).populate({
+      path: "user",
+      select: "-password -__v -email",
+    });
+
     return NextResponse.json({
       success: true,
       messagge: "Post listed successfully",
@@ -24,6 +30,7 @@ export async function GET() {
   }
 }
 
+// Create post
 export async function POST(request) {
   try {
     const user = request.headers.get("user-id");
