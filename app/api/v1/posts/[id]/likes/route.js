@@ -1,17 +1,16 @@
 /** @format */
 
 import { dbConnect } from "@/config/database-connect";
-import commentModel from "@/model/comment-model";
-import Comment from "@/model/comment-model";
+import likeModel from "@/model/like-model";
 import postModel from "@/model/post-model";
 import { NextResponse } from "next/server";
 dbConnect();
-// Get All comments
+// Get All likes
 export async function GET(request, { params }) {
   const id = (await params).id;
 
   try {
-    const data = await commentModel
+    const data = await likeModel
       .find({
         post: {
           _id: id,
@@ -24,11 +23,11 @@ export async function GET(request, { params }) {
 
     return NextResponse.json({
       success: true,
-      message: "Comments listed successfuly",
+      message: "Likes gets successfuly",
       data: data,
     });
   } catch (error) {
-    console.log("Error comments", error.message);
+    console.log("Error like", error.message);
     return NextResponse.json(
       {
         success: false,
@@ -42,11 +41,11 @@ export async function GET(request, { params }) {
   }
 }
 
-// comment created
+// like created
 export async function POST(request, { params }) {
   const postId = (await params).id;
   const existPost = await postModel.findById(postId);
-
+  const user = request.headers.get("user-id");
   if (!existPost) {
     return NextResponse(
       {
@@ -57,19 +56,33 @@ export async function POST(request, { params }) {
     );
   }
 
+  const existLike = await likeModel.findOne({
+    post: {
+      _id: postId,
+    },
+    user: {
+      _id: user,
+    },
+  });
+
+  if (existLike) {
+    await likeModel.findOneAndDelete(existLike._id);
+    return NextResponse.json({
+      success: true,
+      messagge: "Like to Unlike",
+    });
+  }
+
   try {
-    const user = request.headers.get("user-id");
-    const data = await request.json();
-    const savedComment = await commentModel.create({
-      ...data,
+    const data = await likeModel.create({
       user,
       post: postId,
     });
 
     return NextResponse.json({
       success: true,
-      message: "Comment created successfuly",
-      data: savedComment,
+      message: "Like created successfuly",
+      data: data,
     });
   } catch (error) {
     console.log(error);

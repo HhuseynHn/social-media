@@ -3,7 +3,7 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-const likesSchema = new Schema(
+const likeSchema = new Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -15,10 +15,10 @@ const likesSchema = new Schema(
     },
   },
   {
-    collation: "likes",
-    timestamps: true,
+    collation: { locale: "en_US", strength: 1 },
   }
 );
 
-const likesModel = mongoose.model("Like", likesSchema);
-export default likesModel;
+const likeModel = mongoose.models.Like || mongoose.model("Like", likeSchema);
+
+export default likeModel;

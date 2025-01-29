@@ -114,9 +114,9 @@ export async function PATCH(request, { params }) {
       );
     }
 
-    const updateData = await postModel.findByIdAndUpdate(id, body, {
-      new: true,
-    });
+      const updateData = await postModel.findByIdAndUpdate(id, body, {
+        new: true,
+      });
     return NextResponse.json({
       success: true,
       messagge: "Update successfully",
