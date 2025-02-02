@@ -7,10 +7,22 @@ dbConnect();
 // Get All Posts
 export async function GET() {
   try {
-    const data = await postModel.find({}).populate({
-      path: "user",
-      select: "-password -__v -email",
-    });
+    const data = await postModel.find({}).populate([
+      {
+        path: "user",
+        select: "-password -__v -email",
+      },
+      // {
+      //   path: "comments",
+      // },
+      // {
+      //   path: "likes", // Like məlumatlarını gətiririk
+      //   populate: {
+      //     path: "user",
+      //     select: "name", // Yalnız istifadəçi adını göstəririk
+      //   },
+      // },
+    ]);
 
     return NextResponse.json({
       success: true,
