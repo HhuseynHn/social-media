@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function middleware(request) {
   const token = request.headers.get("Authorization");
-
+console.log("TOKEN", token);
   if (!token) {
     return NextResponse.json(
       {

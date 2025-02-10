@@ -5,7 +5,6 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
-import loginSchema from "../schema/login-schema";
 import {
   Card,
   CardContent,
@@ -17,33 +16,44 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ValidationError from "@/components/ui/validation-error";
+import { registerSchema } from "../schema/register-schema";
 
-export const Login = () => {
+export const Register = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(loginSchema),
+    resolver: yupResolver(registerSchema),
   });
 
   const onSubmit = (data) => {
     console.log("Form Data:", data);
-    // ✅ Add API call here if needed
   };
 
   return (
     <div className="flex justify-center items-center h-[100vh]">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
+          <CardTitle className="text-2xl">Register</CardTitle>
+          <CardDescription>Please enter your information</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-5">
+              <div className="grid gap-2">
+                <Label htmlFor="user-name">User name</Label>
+                <Input
+                  id="user-name"
+                  type="text"
+                  placeholder="User name"
+                  {...register("userName")}
+                />
+                {errors.email && (
+                  <ValidationError>{errors.userName.message}</ValidationError>
+                )}
+              </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -69,15 +79,29 @@ export const Login = () => {
                 )}
               </div>
 
+              <div className="grid gap-2">
+                <Label htmlFor="repeat-password">Repeat password</Label>
+                <Input
+                  id="repeat-password"
+                  type="password"
+                  {...register("repeatPassword")}
+                />
+                {errors.password && (
+                  <ValidationError>
+                    {errors.repeatPassword.message}
+                  </ValidationError>
+                )}
+              </div>
+
               <Button type="submit" className="w-full">
-                Login
+                Register
               </Button>
             </div>
 
             <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link href="/register" className="underline text-black">
-                Sign up
+              Do you have an account?{" "}
+              <Link href="/login" className="underline text-black">
+                Sign in
               </Link>
             </div>
           </form>

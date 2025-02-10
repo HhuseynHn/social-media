@@ -94,6 +94,7 @@ export async function PATCH(request, { params }) {
   const id = (await params).id;
   const user = request.headers.get("user-id");
   const body = await request.json();
+  console.log("PATCH", body);
   try {
     const data = await postModel.findOne({
       _id: id,
