@@ -11,11 +11,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import ValidationError from "@/components/ui/validation-error";
+  Label,
+  Input,
+  Button,
+  ValidationError,
+} from "@/common/components";
 import { registerSchema } from "../schema/register-schema";
 
 export const Register = () => {
