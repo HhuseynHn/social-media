@@ -29,7 +29,6 @@ export const Login = () => {
 
   const onSubmit = (data) => {
     console.log("Form Data:", data);
-    // ✅ Add API call here if needed
   };
 
   return (

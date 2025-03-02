@@ -9,6 +9,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        violetDark: "#191250",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
