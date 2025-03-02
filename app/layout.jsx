@@ -1,3 +1,6 @@
+/** @format */
+
+import { ThemeProvider } from "@/common/components/theme/theme-provider";
 import localFont from "next/font/local";
 import "../common/styles/globals.css";
 
@@ -21,9 +24,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,0 +1,7 @@
+{
+  "style": "app/s.css",
+  "tailwind": true,
+  "aliases": {
+    "@components": "./components"
+  }
+}
