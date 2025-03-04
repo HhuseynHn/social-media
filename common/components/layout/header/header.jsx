@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import React from "react";
+import Bell from "../../icons/bell";
+import Message from "../../icons/message";
 import LanguageSwitch from "../../language-switch";
 import Account from "../../profile-account";
 import SearchBar from "../../search-bar";
@@ -20,7 +22,7 @@ export const Header = () => {
               />
             </div>
             <div>
-              <SearchBar placeholder="search" />
+              <SearchBar />
             </div>
           </div>
           <nav>
@@ -30,6 +32,13 @@ export const Header = () => {
               </li>
               <li>
                 <ModeToggle />
+              </li>
+              <li></li>
+              <li>
+                <Message />
+              </li>
+              <li>
+                <Bell />
               </li>
               <li>
                 <Account />
