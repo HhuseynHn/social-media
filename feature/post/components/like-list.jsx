@@ -1,11 +1,11 @@
 /** @format */
 
 import {
-  Button,
-  ScrollArea,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Button,
+  ScrollArea,
 } from "@/common/components";
 
 const LikeList = ({ likes }) => {

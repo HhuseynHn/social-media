@@ -8,18 +8,18 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-  Separator,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Separator,
+  Button,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
 } from "@/common/components";
+
 import {
-  ThumbsUp,
   MessageCircle,
   Share2,
   MoreVertical,
@@ -28,26 +28,33 @@ import {
 } from "lucide-react";
 import AddComment from "./add-comment";
 import LikeList from "./like-list";
+import ShareDialog from "./share-dialog";
+import ReactionPicker from "./reaction-picker";
 
 const Post = ({
   id,
   title,
   content,
+  image,
   author,
   avatar,
-  likes,
+  reactions,
   comments,
   currentUser,
   onEdit,
   onDeleteConfirm,
-  onLike,
+  onReact,
   onAddComment,
 }) => {
   const [showComments, setShowComments] = useState(false);
-  const hasLiked = likes.includes(currentUser);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+
+  const currentUserReaction = reactions.find(
+    (r) => r.user === currentUser
+  )?.type;
 
   return (
-    <Card className="w-full max-w-2xl mb-4">
+    <Card className="w-full max-w-2xl max-h-[500px] mb-4">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar>
           <AvatarImage src={avatar} alt={author} />
@@ -67,7 +74,7 @@ const Post = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => onEdit?.({ id, title, content })}>
+                onClick={() => onEdit?.({ id, title, content, image })}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
@@ -81,17 +88,21 @@ const Post = ({
       </CardHeader>
       <CardContent>
         <p>{content}</p>
+        {image && (
+          <img
+            src={image || "/placeholder.svg"}
+            alt="Post image"
+            className="mt-4 max-w-full h-80 rounded-lg"
+          />
+        )}
       </CardContent>
       <Separator />
       <CardFooter className="flex flex-col items-start">
         <div className="flex justify-between w-full mb-2">
-          <Button
-            variant={hasLiked ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => onLike(id, currentUser)}>
-            <ThumbsUp className="mr-2 h-4 w-4" />
-            {hasLiked ? "Unlike" : "Like"}
-          </Button>
+          <ReactionPicker
+            onReact={(reactionType) => onReact(id, currentUser, reactionType)}
+            currentReaction={currentUserReaction}
+          />
           <Button
             variant="ghost"
             size="sm"
@@ -99,12 +110,15 @@ const Post = ({
             <MessageCircle className="mr-2 h-4 w-4" />
             Comment ({comments.length})
           </Button>
-          <Button variant="ghost" size="sm">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsShareDialogOpen(true)}>
             <Share2 className="mr-2 h-4 w-4" />
             Share
           </Button>
         </div>
-        {likes.length > 0 && <LikeList likes={likes} />}
+        {reactions.length > 0 && <LikeList likes={reactions} />}
         {showComments && (
           <div className="w-full mt-2">
             {comments.map((comment, index) => (
@@ -126,6 +140,12 @@ const Post = ({
           </div>
         )}
       </CardFooter>
+      <ShareDialog
+        isOpen={isShareDialogOpen}
+        onClose={() => setIsShareDialogOpen(false)}
+        postContent={content}
+        postImage={image}
+      />
     </Card>
   );
 };

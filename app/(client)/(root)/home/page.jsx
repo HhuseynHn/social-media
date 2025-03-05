@@ -7,7 +7,7 @@ const HomePage = () => {
   return (
     <>
       <main>
-        <section>
+        <section className="w-9/12 mx-auto flex justify-center">
           <PostLayout />
         </section>
       </main>
