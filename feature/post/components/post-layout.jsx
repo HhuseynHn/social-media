@@ -3,12 +3,14 @@
 "use client";
 
 import { useState } from "react";
-import DeleteConfirmDialog from "./delete-confirm-dialog";
-import EditPostDialog from "./edit-post-dialog";
 import Post from "./post";
+import CreatePost from "./create-post";
+import EditPostDialog from "./edit-post-dialog";
+import DeleteConfirmDialog from "./delete-confirm-dialog";
 
 export default function PostLayout() {
   const currentUser = "Current User"; // This would typically come from an authentication system
+  const userAvatar = "/placeholder.svg?height=40&width=40"; // This would typically come from user data
 
   const [posts, setPosts] = useState([
     {
@@ -18,8 +20,9 @@ export default function PostLayout() {
         "This is the content of my first post using shadcn/ui components. It's simple yet elegant!",
       author: "John Doe",
       avatar: "/placeholder.svg?height=40&width=40",
-      likes: [],
+      reactions: [],
       comments: [],
+      image: null,
     },
     {
       id: 2,
@@ -28,8 +31,9 @@ export default function PostLayout() {
         "Here's another post to demonstrate how the 3-dot menu works with multiple posts.",
       author: "Jane Smith",
       avatar: "/placeholder.svg?height=40&width=40",
-      likes: [],
+      reactions: [],
       comments: [],
+      image: null,
     },
   ]);
 
@@ -37,6 +41,20 @@ export default function PostLayout() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+
+  const handleCreatePost = (content, image) => {
+    const newPost = {
+      id: Date.now(),
+      title: `Post by ${currentUser}`,
+      content,
+      image,
+      author: currentUser,
+      avatar: userAvatar,
+      reactions: [],
+      comments: [],
+    };
+    setPosts([newPost, ...posts]);
+  };
 
   const handleEdit = (post) => {
     setEditingPost(post);
@@ -64,15 +82,17 @@ export default function PostLayout() {
     setPostToDelete(null);
   };
 
-  const handleLike = (postId, user) => {
+  const handleReact = (postId, user, reactionType) => {
     setPosts(
       posts.map((post) =>
         post.id === postId
           ? {
               ...post,
-              likes: post.likes.includes(user)
-                ? post.likes.filter((likeUser) => likeUser !== user)
-                : [...post.likes, user],
+              reactions: post.reactions.some((r) => r.user === user)
+                ? post.reactions.map((r) =>
+                    r.user === user ? { ...r, type: reactionType } : r
+                  )
+                : [...post.reactions, { user, type: reactionType }],
             }
           : post
       )
@@ -90,7 +110,7 @@ export default function PostLayout() {
                 {
                   id: Date.now(),
                   author: currentUser,
-                  avatar: "/placeholder.svg?height=32&width=32",
+                  avatar: userAvatar,
                   content,
                 },
               ],
@@ -111,8 +131,12 @@ export default function PostLayout() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6">
-      <h1 className="text-2xl font-bold mb-6">My Posts</h1>
+    <main className="flex min-h-screen flex-col items-center p-6">
+      <CreatePost
+        onCreatePost={handleCreatePost}
+        currentUser={currentUser}
+        userAvatar={userAvatar}
+      />
 
       {posts.map((post) => (
         <Post
@@ -121,7 +145,7 @@ export default function PostLayout() {
           currentUser={currentUser}
           onEdit={handleEdit}
           onDeleteConfirm={handleDeleteConfirm}
-          onLike={handleLike}
+          onReact={handleReact}
           onAddComment={handleAddComment}
         />
       ))}

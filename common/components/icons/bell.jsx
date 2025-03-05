@@ -6,7 +6,7 @@ const Bell = () => {
   return (
     <>
       <div>
-        <PiBellFill className="text-slate-400 cursor-pointer text-[24px] hover:text-slate-500" />
+        <PiBellFill className="text-slate-400 cursor-pointer text-[22px] hover:text-slate-500" />
       </div>
     </>
   );
