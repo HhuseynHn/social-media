@@ -33,7 +33,7 @@ export const Register = () => {
 
   return (
     <div className="flex justify-center items-center h-[100vh]">
-      <Card>
+      <Card className="w-[340px]">
         <CardHeader>
           <CardTitle className="text-2xl">Register</CardTitle>
           <CardDescription>Please enter your information</CardDescription>
