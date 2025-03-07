@@ -73,3 +73,10 @@ export {
 } from "./ui/popover";
 
 export { ScrollArea, ScrollBar } from "./ui/scroll-area";
+export {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "./ui/carousel";
