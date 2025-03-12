@@ -17,8 +17,12 @@ import {
   Button,
   ValidationError,
 } from "@/common/components";
+import { authLogin } from "../service/auth-service";
+import { useRouter } from "next/navigation";
 
 export const Login = () => {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -27,8 +31,11 @@ export const Login = () => {
     resolver: yupResolver(loginSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
+  const onSubmit = async (data) => {
+    const response = await authLogin(data);
+    if (response.success) {
+      router.push("/home");
+    }
   };
 
   return (

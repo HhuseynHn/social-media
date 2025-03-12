@@ -7,8 +7,8 @@ import Profile from "./profile";
 const ProfileLayout = () => {
   return (
     <>
-      <main className="text-center">
-        <section>
+      <main className="w-full">
+        <section className="w-full">
           <Profile />
         </section>
         <section>
