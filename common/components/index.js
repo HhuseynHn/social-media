@@ -80,3 +80,5 @@ export {
   CarouselPrevious,
   CarouselNext,
 } from "./ui/carousel";
+
+export { Toaster } from "./ui/sonner";

@@ -2,6 +2,7 @@
 "use client";
 
 import React from "react";
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
@@ -17,8 +18,11 @@ import {
   ValidationError,
 } from "@/common/components";
 import { registerSchema } from "../schema/register-schema";
+import { authRegister } from "../service/auth-service";
+import { useRouter } from "next/navigation";
 
 export const Register = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -27,8 +31,34 @@ export const Register = () => {
     resolver: yupResolver(registerSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
+  const onSubmit = async (data) => {
+    if (Object.keys(errors).length > 0) {
+      const errorMessages = Object.values(errors)
+        .map((error) => error.message)
+        .join("\n");
+
+      toast.error(`❌ Validation Error:\n${errorMessages}`, {
+        duration: 3000,
+        position: "top-center",
+      });
+      return;
+    }
+
+    const response = await authRegister(data);
+    // // console.log("response =", response);
+    if (response.success) {
+      toast("✅ Register successful! Redirecting...", {
+        duration: 3000,
+        position: "top-center",
+      });
+      router.push("/login");
+    } else {
+      toast(`❌ ${response.message || "Register failed. Please try again"}`, {
+        duration: 3000,
+        position: "top-center",
+        className: "bg-red-500 text-white",
+      });
+    }
   };
 
   return (

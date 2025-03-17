@@ -1,5 +1,7 @@
 /** @format */
 
+import { Toaster } from "@/common/components";
+// import { ToastProvider } from "@/common/components/search-bar/provider/toast-provider";
 import { ThemeProvider } from "@/common/components/theme/theme-provider";
 import localFont from "next/font/local";
 import "../common/styles/globals.css";
@@ -31,6 +33,8 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange>
           {children}
+          {/* <ToastProvider /> */}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

@@ -2,11 +2,12 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Post from "./post";
 import CreatePost from "./create-post";
 import EditPostDialog from "./edit-post-dialog";
 import DeleteConfirmDialog from "./delete-confirm-dialog";
+import { getPosts } from "../services/post-service";
 
 export default function PostLayout() {
   const currentUser = "Current User"; // This would typically come from an authentication system
@@ -41,6 +42,16 @@ export default function PostLayout() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+
+  useEffect(() => {
+    getPosts()
+      .then((data) => {
+        console.log("Data-", data);
+      })
+      .catch((error) => {
+        console.log("err", error);
+      });
+  }, []);
 
   const handleCreatePost = (content, image) => {
     const newPost = {
