@@ -4,7 +4,7 @@ import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 export async function middleware(request) {
   const token = request.headers.get("Authorization");
-console.log("TOKEN", token);
+  console.log("TOKEN", token);
   if (!token) {
     return NextResponse.json(
       {
@@ -40,10 +40,6 @@ console.log("TOKEN", token);
     );
   }
 }
-// export const config = {
-//   runtime: "nodejs", // Keep the edge runtime
-//   matcher: ["/api/v1/posts*", "/api/v1/posts/:id", "/api/v1/comments"], // id dinamic
-// };
 
 export const config = {
   matcher: [

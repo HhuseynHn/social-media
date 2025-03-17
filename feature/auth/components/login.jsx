@@ -2,6 +2,7 @@
 "use client";
 
 import React from "react";
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
@@ -32,9 +33,31 @@ export const Login = () => {
   });
 
   const onSubmit = async (data) => {
+    if (Object.keys(errors).length > 0) {
+      const errorMessages = Object.values(errors)
+        .map((error) => error.message)
+        .join("\n");
+
+      toast.error(`❌ Validation Error:\n${errorMessages}`, {
+        duration: 3000,
+        position: "top-center",
+      });
+      return;
+    }
+
     const response = await authLogin(data);
     if (response.success) {
+      toast("✅ Login successful! Redirecting...", {
+        duration: 3000,
+        position: "top-center",
+      });
       router.push("/home");
+    } else {
+      toast(`❌ ${response.message || "Login failed. Please try again"}`, {
+        duration: 3000,
+        position: "top-center",
+        className: "bg-red-500 text-white",
+      });
     }
   };
 
