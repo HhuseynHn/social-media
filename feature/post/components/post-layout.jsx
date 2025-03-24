@@ -13,31 +13,32 @@ export default function PostLayout() {
   const currentUser = "Current User"; // This would typically come from an authentication system
   const userAvatar = "/placeholder.svg?height=40&width=40"; // This would typically come from user data
 
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: "My First Post",
-      content:
-        "This is the content of my first post using shadcn/ui components. It's simple yet elegant!",
-      author: "John Doe",
-      avatar: "/placeholder.svg?height=40&width=40",
-      reactions: [],
-      comments: [],
-      image: null,
-    },
-    {
-      id: 2,
-      title: "Another Great Post",
-      content:
-        "Here's another post to demonstrate how the 3-dot menu works with multiple posts.",
-      author: "Jane Smith",
-      avatar: "/placeholder.svg?height=40&width=40",
-      reactions: [],
-      comments: [],
-      image: null,
-    },
-  ]);
+  const [posts, setPosts] = useState([]);
 
+  // [
+  //   {
+  //     id: 1,
+  //     title: "My First Post",
+  //     content:
+  //       "This is the content of my first post using shadcn/ui components. It's simple yet elegant!",
+  //     author: "John Doe",
+  //     avatar: "/placeholder.svg?height=40&width=40",
+  //     reactions: [],
+  //     comments: [],
+  //     image: null,
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Another Great Post",
+  //     content:
+  //       "Here's another post to demonstrate how the 3-dot menu works with multiple posts.",
+  //     author: "Jane Smith",
+  //     avatar: "/placeholder.svg?height=40&width=40",
+  //     reactions: [],
+  //     comments: [],
+  //     image: null,
+  //   },
+  // ];
   const [editingPost, setEditingPost] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -46,7 +47,18 @@ export default function PostLayout() {
   useEffect(() => {
     getPosts()
       .then((data) => {
-        console.log("Data-", data);
+        if (data.success) {
+          console.log("Data-", data.data);
+
+          const transformData = data.data.map((e) => {
+            return {
+              ...e,
+              reactions: [],
+              image: null,
+            };
+          });
+          setPosts(transformData);
+        }
       })
       .catch((error) => {
         console.log("err", error);
@@ -60,7 +72,7 @@ export default function PostLayout() {
       content,
       image,
       author: currentUser,
-      avatar: userAvatar,
+      // avatar: userAvatar,
       reactions: [],
       comments: [],
     };
@@ -151,7 +163,7 @@ export default function PostLayout() {
 
       {posts.map((post) => (
         <Post
-          key={post.id}
+          key={post._id}
           {...post}
           currentUser={currentUser}
           onEdit={handleEdit}

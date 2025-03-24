@@ -36,8 +36,7 @@ const Post = ({
   title,
   content,
   image,
-  author,
-  avatar,
+  user,
   reactions,
   comments,
   currentUser,
@@ -48,7 +47,20 @@ const Post = ({
 }) => {
   const [showComments, setShowComments] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-
+  console.log({
+    id,
+    title,
+    content,
+    image,
+    user,
+    reactions,
+    comments,
+    currentUser,
+    onEdit,
+    onDeleteConfirm,
+    onReact,
+    onAddComment,
+  });
   const currentUserReaction = reactions.find(
     (r) => r.user === currentUser
   )?.type;
@@ -57,13 +69,15 @@ const Post = ({
     <Card className="w-full max-w-2xl max-h-[500px] mb-4">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar>
-          <AvatarImage src={avatar} alt={author} />
-          <AvatarFallback>{author.charAt(0)}</AvatarFallback>
+          <AvatarImage src={user?.avatar} alt={user?.userName} />
+          <AvatarFallback>{user?.userName.charAt(0)}</AvatarFallback>
         </Avatar>
-        <div>
-          <h2 className="text-lg font-semibold">{title}</h2>
-          <p className="text-sm text-muted-foreground">{author}</p>
+        <div className="w-full">
+          <h2 className="text-sm font-semibold">{user?.userName}</h2>
+          <p className="text-sm text-muted-foreground">18.03.2025 22:36</p>
+          <h5 className="text-center  ">{title}</h5>
         </div>
+        <div></div>
         <div className="ml-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -119,26 +133,26 @@ const Post = ({
           </Button>
         </div>
         {reactions.length > 0 && <LikeList likes={reactions} />}
-        {showComments && (
+        {/* {showComments && (
           <div className="w-full mt-2">
             {comments.map((comment, index) => (
               <div key={index} className="flex items-start space-x-2 mb-2">
                 <Avatar className="w-8 h-8">
                   <AvatarImage src={comment.avatar} />
-                  <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
+                  <AvatarFallback>{comment.user.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-semibold">{comment.author}</p>
+                  <p className="text-sm font-semibold">{comment.user}</p>
                   <p className="text-sm">{comment.content}</p>
                 </div>
               </div>
             ))}
             <AddComment
               onAddComment={(content) => onAddComment(id, content)}
-              userAvatar={avatar}
+              userAvatar={user.avatar}
             />
           </div>
-        )}
+        )} */}
       </CardFooter>
       <ShareDialog
         isOpen={isShareDialogOpen}
