@@ -1,5 +1,3 @@
-/** @format */
-
 "use client";
 
 import { useState, useRef } from "react";
@@ -14,6 +12,7 @@ import {
   AvatarImage,
 } from "@/common/components";
 import { Image, X } from "lucide-react";
+import { postPost } from "../services/post-service";
 
 const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
   const [content, setContent] = useState("");
@@ -31,49 +30,40 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
   };
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
-
-    console.log("HandleCHANGE", "OKK");
-  };
-
-  const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = (e) => setImage(e.target.result);
-      reader.readAsDataURL(file);
+    if (file) {
+      setImage(file);
+      console.log("Seçilen dosya:", file);
     }
-
-    setImage(e.target.file[0]);
   };
-  // const handleUpload = async () => {
-  const handleUpload = () => {
+
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    // if (!image) {
+    //   alert("Lütfen bir resim seçin!");
+    //   return;
+    // }
+
     const formData = new FormData();
     formData.append("file", image);
-    // formData.append("fullName", fullName);
-    formData.append("fullName", "fullName");
-    console.log("img-", image);
-    const obj = Object.fromEntries(formData.entries());
-    console.log("obl-", obj);
-    console.log("fileREF,", fileInputRef.current.value);
+    formData.append("title", content.trim());
 
-    // const res = await fetch("/api/upload", {
-    //   method: "POST",
-    //   body: formData,
-    // });
+    try {
+      const res = postPost(formData);
 
-    // const data = await res.json();
-    // if (res.ok) {
-    //   setImageUrl(data.data.imageUrl);
-    //   alert("Şəkil uğurla yükləndi və MongoDB-yə yazıldı!");
-    // } else {
-    //   alert("Yükləmə uğursuz oldu!");
-    // }
+      if (res.success) {
+        setImageUrl(data.imageUrl);
+      } else {
+        console.log("Yükləmə uğursuz oldu!");
+      }
+    } catch (error) {
+      console.error("Upload Hatası:", error);
+    }
   };
 
   return (
     <Card className="w-full max-w-2xl mb-6">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleUpload}>
         <CardContent className="pt-6">
           <div className="flex items-start space-x-4">
             <Avatar>
@@ -87,23 +77,23 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
                 onChange={(e) => setContent(e.target.value)}
                 className="w-full"
               />
-              {/* {image && (
+              {image && (
                 <div className="relative">
                   <img
-                    src={image || "/placeholder.svg"}
+                    src={URL.createObjectURL(image)}
                     alt="Preview"
                     className="max-w-full max-h-80 rounded-lg"
                   />
-                  
                   <Button
                     variant="destructive"
                     size="icon"
                     className="absolute top-2 right-2"
-                    onClick={() => setImage(null)}>
+                    onClick={() => setImage(null)}
+                  >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
-              )} */}
+              )}
             </div>
           </div>
         </CardContent>
@@ -111,21 +101,22 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
           <Button
             type="button"
             variant="outline"
-            // onClick={() => fileInputRef.current.click()}
+            onClick={() => fileInputRef.current.click()}
           >
             <Image className="mr-2 h-4 w-4" />
             Add Image
           </Button>
           <input
             type="file"
-            // ref={fileInputRef}
-            // onChange={handleImageUpload}
+            ref={fileInputRef}
             onChange={handleImageChange}
             accept="image/*"
             className="hidden"
           />
-          <button onClick={handleUpload}>Yüklə</button>
-          {imageUrl && <img src={imageUrl} alt="Uploaded" width={200} />}
+          {/* <Button type="button" onClick={handleUpload}>
+            Yüklə
+          </Button> */}
+          {imageUrl && <img src={imageUrl} alt="Uploaded" width={150} />}
           <Button type="submit">Create Post</Button>
         </CardFooter>
       </form>

@@ -10,6 +10,9 @@ const postSchema = new Schema(
       required: true,
       trim: true,
     },
+    imageUrl: {
+      type: String,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -26,5 +29,3 @@ const postSchema = new Schema(
 
 const postModel = mongoose.models.Post || mongoose.model("Post", postSchema);
 export default postModel;
-
-

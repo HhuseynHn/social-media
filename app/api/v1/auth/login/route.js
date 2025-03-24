@@ -13,7 +13,6 @@ export async function POST(request) {
     const find = await userModel.findOne({
       email: data.email,
     });
-    console.log("find=", find);
     if (!find) {
       return NextResponse.json(
         {

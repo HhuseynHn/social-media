@@ -1,4 +1,5 @@
 /** @format */
+import cloudinary from "@/config/cloudinary-config";
 import { dbConnect } from "@/config/database-connect";
 import postModel from "@/model/post-model";
 import { NextResponse } from "next/server";
@@ -46,9 +47,32 @@ export async function GET() {
 export async function POST(request) {
   try {
     const user = request.headers.get("user-id");
+    const formData = await request.formData();
+    const file = formData.get("file");
+    const title = formData.get("title");
+    let imageUrl = null;
 
-    const data = await request.json();
-    const savedPost = await postModel.create({ ...data, user });
+    //Ger file gelirse ( bunuda clouda yazirig deye null getmesin)
+    if (file) {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      // Buffer-i Base64 formatına çevirərək Cloudinary-yə göndərmək
+      const base64Image = `data:${file.type};base64,${buffer.toString(
+        "base64"
+      )}`;
+
+      // Cloudinary-yə yüklə
+      imageUrl = await cloudinary.v2.uploader.upload(base64Image, {
+        folder: "uploads",
+      });
+    }
+
+    const savedPost = await postModel.create({
+      title,
+      imageUrl: imageUrl.secure_url,
+      user,
+    });
 
     return NextResponse.json({
       success: true,
@@ -56,6 +80,8 @@ export async function POST(request) {
       data: savedPost,
     });
   } catch (error) {
+    console.log(error);
+
     return NextResponse.json(
       {
         success: false,
