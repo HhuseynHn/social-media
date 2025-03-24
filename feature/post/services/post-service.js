@@ -1,7 +1,6 @@
 /** @format */
 
 import { axiosInstance } from "@/config/axios-config";
-import axios from "axios";
 
 export const getPosts = async () => {
   try {
