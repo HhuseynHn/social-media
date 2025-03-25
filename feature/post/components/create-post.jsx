@@ -18,6 +18,7 @@ import { Image, X } from "lucide-react";
 const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const fileInputRef = useRef(null);
 
@@ -27,6 +28,7 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
       onCreatePost(content, image);
       setContent("");
       setImage(null);
+      setImagePreview("");
     }
   };
 
@@ -39,12 +41,13 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
+      setImage(file);
       const reader = new FileReader();
-      reader.onload = (e) => setImage(e.target.result);
+      reader.onload = (e) => setImagePreview(e.target.result);
       reader.readAsDataURL(file);
     }
 
-    setImage(e.target.file[0]);
+    // setImage(e.target.file[0]);
   };
   // const handleUpload = async () => {
   const handleUpload = () => {
@@ -111,16 +114,15 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
           <Button
             type="button"
             variant="outline"
-            // onClick={() => fileInputRef.current.click()}
-          >
+            onClick={() => fileInputRef.current.click()}>
             <Image className="mr-2 h-4 w-4" />
             Add Image
           </Button>
           <input
             type="file"
-            // ref={fileInputRef}
-            // onChange={handleImageUpload}
-            onChange={handleImageChange}
+            ref={fileInputRef}
+            onChange={handleImageUpload}
+            // onChange={handleImageChange}
             accept="image/*"
             className="hidden"
           />
