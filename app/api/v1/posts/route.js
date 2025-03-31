@@ -52,17 +52,17 @@ export async function POST(request) {
     const title = formData.get("title");
     let imageUrl = null;
 
-    //Ger file gelirse ( bunuda clouda yazirig deye null getmesin)
+    //If recieve the file from server also to write the cloud for don't send null
     if (file) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
-      // Buffer-i Base64 formatına çevirərək Cloudinary-yə göndərmək
+      // The Buffer converting to Base64 form send to Cloudinary
       const base64Image = `data:${file.type};base64,${buffer.toString(
         "base64"
       )}`;
 
-      // Cloudinary-yə yüklə
+      //Upload to cloudinary
       imageUrl = await cloudinary.v2.uploader.upload(base64Image, {
         folder: "uploads",
       });

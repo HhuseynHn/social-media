@@ -7,7 +7,7 @@ import Post from "./post";
 import CreatePost from "./create-post";
 import EditPostDialog from "./edit-post-dialog";
 import DeleteConfirmDialog from "./delete-confirm-dialog";
-import { getPosts } from "../services/post-service";
+import { deletePost, getPosts } from "../services/post-service";
 
 export default function PostLayout() {
   const currentUser = "Current User"; // This would typically come from an authentication system
@@ -99,8 +99,16 @@ export default function PostLayout() {
     setIsDeleteDialogOpen(true);
   };
 
-  const handleDelete = () => {
-    setPosts(posts.filter((post) => post.id !== postToDelete));
+  const handleDelete = async (postId) => {
+    console.log(postId);
+    // if (!postToDelete) return;
+    // try {
+    //   const response = await deletePost(postToDelete);
+    //   if (response.success) {
+    //     const updatePosts = await
+    //   }
+    // } catch (error) {}
+    // setPosts(posts.filter((post) => post.id !== postToDelete));
     setIsDeleteDialogOpen(false);
     setPostToDelete(null);
   };
@@ -185,7 +193,7 @@ export default function PostLayout() {
       <DeleteConfirmDialog
         isOpen={isDeleteDialogOpen}
         onClose={closeDeleteDialog}
-        onConfirm={handleDelete}
+        onConfirm={() => handleDelete()}
       />
     </main>
   );

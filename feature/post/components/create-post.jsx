@@ -1,3 +1,5 @@
+/** @format */
+
 "use client";
 
 import { useState, useRef } from "react";
@@ -39,20 +41,17 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    // if (!image) {
-    //   alert("Lütfen bir resim seçin!");
-    //   return;
-    // }
 
     const formData = new FormData();
     formData.append("file", image);
     formData.append("title", content.trim());
-
+    console.log("Formdata", formData);
     try {
-      const res = postPost(formData);
-
+      const res = await postPost(formData);
+      console.log("res", res);
       if (res.success) {
-        setImageUrl(data.imageUrl);
+        setImageUrl(res.data.imageUrl);
+        console.log("imgURL", imageUrl);
       } else {
         console.log("Yükləmə uğursuz oldu!");
       }
@@ -88,8 +87,7 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
                     variant="destructive"
                     size="icon"
                     className="absolute top-2 right-2"
-                    onClick={() => setImage(null)}
-                  >
+                    onClick={() => setImage(null)}>
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
@@ -101,8 +99,7 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => fileInputRef.current.click()}
-          >
+            onClick={() => fileInputRef.current.click()}>
             <Image className="mr-2 h-4 w-4" />
             Add Image
           </Button>
@@ -117,7 +114,9 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
             Yüklə
           </Button> */}
           {imageUrl && <img src={imageUrl} alt="Uploaded" width={150} />}
-          <Button type="submit">Create Post</Button>
+          <Button type="submit" onClick={handleUpload}>
+            Create Post
+          </Button>
         </CardFooter>
       </form>
     </Card>
