@@ -1,6 +1,9 @@
 /** @format */
 
-import { axiosInstance } from "@/config/axios-config";
+import {
+  axiosInstance,
+  axiosInstanceWithFormData,
+} from "@/config/axios-config";
 
 export const getPosts = async () => {
   try {
@@ -19,7 +22,7 @@ export const getPosts = async () => {
 
 export const postPost = async (body) => {
   try {
-    const response = await axiosInstance.post("/posts", body);
+    const response = await axiosInstanceWithFormData.post("/posts", body);
 
     //eger formdata problemi yaraandarsa axiosInstanceWithFormData istifadeet
 
@@ -31,6 +34,18 @@ export const postPost = async (body) => {
     return {
       success: false,
       message: error.response.data.message || error.message,
+    };
+  }
+};
+
+export const deletePost = async (postId) => {
+  try {
+    const response = await axiosInstance.delete(`/posts/${postId}`);
+    return response.data;
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || error.message,
     };
   }
 };
