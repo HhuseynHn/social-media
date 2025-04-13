@@ -7,8 +7,6 @@ const postSchema = new Schema(
   {
     title: {
       type: String,
-      required: true,
-      trim: true,
     },
     imageUrl: {
       type: String,
@@ -24,7 +22,10 @@ const postSchema = new Schema(
       },
     ],
   },
-  { collation: { locale: "en_US", strength: 1 } }
+  {
+    collation: { locale: "en_US", strength: 1 },
+    timestamps: true,
+  }
 );
 
 const postModel = mongoose.models.Post || mongoose.model("Post", postSchema);

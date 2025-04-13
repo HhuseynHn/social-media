@@ -21,8 +21,10 @@ const userSchema = new Schema(
       trim: true,
     },
     avatar: {
-      type: Number,
-      default: 0,
+      type: String,
+    },
+    backgroundCover: {
+      type: String,
     },
   },
   { collation: { locale: "en_US", strength: 1 } }

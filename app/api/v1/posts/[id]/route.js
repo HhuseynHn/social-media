@@ -1,6 +1,7 @@
 /** @format */
 import { dbConnect } from "@/config/database-connect";
 import postModel from "@/model/post-model";
+import { Types } from "mongoose";
 
 import { NextResponse } from "next/server";
 dbConnect();
@@ -39,7 +40,7 @@ export async function GET(request, { params }) {
       {
         success: false,
         details: error,
-        error: "Error to be Happen",
+        error: "Error to be Happen, post cant't fetched",
       },
       { status: 500 }
     );
@@ -48,7 +49,10 @@ export async function GET(request, { params }) {
 
 // Delete post
 export async function DELETE(request, { params }) {
-  const id = (await params).id;
+  const postId = (await params).id;
+  console.log("POST__ID", postId);
+  const id = new Types.ObjectId(postId);
+  console.log("ID", id);
   const user = request.headers.get("user-id");
 
   try {
@@ -82,7 +86,7 @@ export async function DELETE(request, { params }) {
       {
         success: false,
         details: error,
-        error: "Error to be Happen",
+        error: "Error to be Happen, post can't deleted",
       },
       { status: 500 }
     );
@@ -115,9 +119,9 @@ export async function PATCH(request, { params }) {
       );
     }
 
-      const updateData = await postModel.findByIdAndUpdate(id, body, {
-        new: true,
-      });
+    const updateData = await postModel.findByIdAndUpdate(id, body, {
+      new: true,
+    });
     return NextResponse.json({
       success: true,
       messagge: "Update successfully",
@@ -129,7 +133,7 @@ export async function PATCH(request, { params }) {
       {
         success: false,
         details: error,
-        error: "Error to be Happen",
+        error: "Error to be Happen, post can't updated",
       },
       { status: 500 }
     );
