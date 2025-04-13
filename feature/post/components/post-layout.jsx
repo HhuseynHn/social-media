@@ -11,34 +11,8 @@ import { deletePost, getPosts } from "../services/post-service";
 
 export default function PostLayout() {
   const currentUser = "Current User"; // This would typically come from an authentication system
-  const userAvatar = "/placeholder.svg?height=40&width=40"; // This would typically come from user data
-
+  const userAvatar = "ccc"; // This would typically come from user data
   const [posts, setPosts] = useState([]);
-
-  // [
-  //   {
-  //     id: 1,
-  //     title: "My First Post",
-  //     content:
-  //       "This is the content of my first post using shadcn/ui components. It's simple yet elegant!",
-  //     author: "John Doe",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //     reactions: [],
-  //     comments: [],
-  //     image: null,
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Another Great Post",
-  //     content:
-  //       "Here's another post to demonstrate how the 3-dot menu works with multiple posts.",
-  //     author: "Jane Smith",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //     reactions: [],
-  //     comments: [],
-  //     image: null,
-  //   },
-  // ];
   const [editingPost, setEditingPost] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -48,7 +22,7 @@ export default function PostLayout() {
     getPosts()
       .then((data) => {
         if (data.success) {
-          console.log("Data-", data.data);
+          console.log("Post Layout useEffect Data-", data.data);
 
           const transformData = data.data.map((e) => {
             return {
@@ -61,24 +35,26 @@ export default function PostLayout() {
         }
       })
       .catch((error) => {
-        console.log("err", error);
+        console.log("postLayout useEffect getPosts error", error);
       });
   }, []);
 
   const handleCreatePost = (content, image) => {
+    console.log("data", posts);
     const newPost = {
-      id: Date.now(),
+      _id: Date.now(),
       title: `Post by ${currentUser}`,
       content,
       image,
-      author: currentUser,
-      // avatar: userAvatar,
+      // author: currentUser,
+      user: { userName: currentUser, avatar: userAvatar },
+      // timeStamp,
       reactions: [],
       comments: [],
     };
     setPosts([newPost, ...posts]);
   };
-
+  console.log("postCreate", posts);
   const handleEdit = (post) => {
     setEditingPost(post);
     setIsEditDialogOpen(true);
@@ -95,28 +71,33 @@ export default function PostLayout() {
   };
 
   const handleDeleteConfirm = (postId) => {
+    console.log("onConfrim == postID - ", postId);
     setPostToDelete(postId);
     setIsDeleteDialogOpen(true);
   };
 
-  const handleDelete = async (postId) => {
-    console.log(postId);
-    // if (!postToDelete) return;
-    // try {
-    //   const response = await deletePost(postToDelete);
-    //   if (response.success) {
-    //     const updatePosts = await
-    //   }
-    // } catch (error) {}
-    // setPosts(posts.filter((post) => post.id !== postToDelete));
-    setIsDeleteDialogOpen(false);
-    setPostToDelete(null);
+  const handleDelete = async () => {
+    console.log("post to delete", postToDelete);
+
+    if (!postToDelete) return;
+    console.log("line -2");
+    try {
+      const response = await deletePost(postToDelete);
+      console.log("response --", response);
+      if (response.success) {
+        setPosts(posts.filter((post) => post._id !== postToDelete));
+        setIsDeleteDialogOpen(false);
+        setPostToDelete(null);
+      }
+    } catch (error) {
+      console.log("post-layout handle delet error", error);
+    }
   };
 
   const handleReact = (postId, user, reactionType) => {
     setPosts(
       posts.map((post) =>
-        post.id === postId
+        post._id === postId
           ? {
               ...post,
               reactions: post.reactions.some((r) => r.user === user)
@@ -133,14 +114,15 @@ export default function PostLayout() {
   const handleAddComment = (postId, content) => {
     setPosts(
       posts.map((post) =>
-        post.id === postId
+        post._id === postId
           ? {
               ...post,
               comments: [
                 ...post.comments,
                 {
                   id: Date.now(),
-                  author: currentUser,
+                  // author: currentUser,
+                  user: currentUser,
                   avatar: userAvatar,
                   content,
                 },
@@ -178,6 +160,7 @@ export default function PostLayout() {
           onDeleteConfirm={handleDeleteConfirm}
           onReact={handleReact}
           onAddComment={handleAddComment}
+          setPostToDelete={setPostToDelete}
         />
       ))}
 
@@ -193,7 +176,7 @@ export default function PostLayout() {
       <DeleteConfirmDialog
         isOpen={isDeleteDialogOpen}
         onClose={closeDeleteDialog}
-        onConfirm={() => handleDelete()}
+        onConfirm={handleDelete}
       />
     </main>
   );

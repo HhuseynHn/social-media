@@ -36,7 +36,7 @@ export async function GET() {
       {
         success: false,
         details: error,
-        error: "Error to be Happen",
+        error: "Error to be Happen, Post can't listed",
       },
       { status: 500 }
     );
@@ -53,6 +53,7 @@ export async function POST(request) {
     let imageUrl = null;
 
     //If recieve the file from server also to write the cloud for don't send null
+
     if (file) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
@@ -69,8 +70,8 @@ export async function POST(request) {
     }
 
     const savedPost = await postModel.create({
-      title,
-      imageUrl: imageUrl.secure_url,
+      title: title ? title : null,
+      imageUrl: file ? imageUrl.secure_url : null,
       user,
     });
 
@@ -78,6 +79,7 @@ export async function POST(request) {
       success: true,
       messagge: "Post created successfully",
       data: savedPost,
+      createdTime: savedPost.createdAt,
     });
   } catch (error) {
     console.log(error);
@@ -85,7 +87,7 @@ export async function POST(request) {
     return NextResponse.json(
       {
         success: false,
-        error: "Error to be Happen",
+        error: "Error to be Happen When post created",
       },
       { status: 500 }
     );

@@ -1,0 +1,24 @@
+// [
+  //   {
+  //     id: 1,
+  //     title: "My First Post",
+  //     content:
+  //       "This is the content of my first post using shadcn/ui components. It's simple yet elegant!",
+  //     author: "John Doe",
+  //     avatar: "/placeholder.svg?height=40&width=40",
+  //     reactions: [],
+  //     comments: [],
+  //     image: null,
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Another Great Post",
+  //     content:
+  //       "Here's another post to demonstrate how the 3-dot menu works with multiple posts.",
+  //     author: "Jane Smith",
+  //     avatar: "/placeholder.svg?height=40&width=40",
+  //     reactions: [],
+  //     comments: [],
+  //     image: null,
+  //   },
+  // ];
