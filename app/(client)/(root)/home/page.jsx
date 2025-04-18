@@ -5,6 +5,7 @@ import StoriesCarousel from "@/feature/storie/stories-corusel";
 import React from "react";
 
 const HomePage = () => {
+  console.log("men render oluraam in home page");
   return (
     <>
       <main>

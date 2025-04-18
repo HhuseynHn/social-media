@@ -8,7 +8,6 @@ export const authLogin = async (body) => {
     const data = response.data;
 
     if (data.success) {
-      localStorage.setItem("token", data.token);
       return {
         success: true,
       };

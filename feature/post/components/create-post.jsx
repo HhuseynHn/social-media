@@ -15,21 +15,14 @@ import {
 } from "@/common/components";
 import { Image, X } from "lucide-react";
 import { postPost } from "../services/post-service";
+import { useRouter } from "next/navigation";
 
-const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
+const CreatePost = ({ currentUser, userAvatar, setPosts, posts }) => {
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const fileInputRef = useRef(null);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (content.trim() || image) {
-      onCreatePost(content, image);
-      setContent("");
-      setImage(null);
-    }
-  };
+  const router = useRouter();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -43,17 +36,29 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("file", image);
-    formData.append("title", content.trim());
-    console.log("Formdata", formData);
+    if (image) {
+      formData.append("file", image);
+    }
+
+    if (content.trim()) {
+      formData.append("title", content.trim());
+    }
     try {
-      const res = await postPost(formData);
-      console.log("res", res);
-      if (res.success) {
-        setImageUrl(res.data.imageUrl);
-        console.log("imgURL", imageUrl);
-      } else {
-        console.log("Yükləmə uğursuz oldu!");
+      if (image || content.trim()) {
+        const res = await postPost(formData);
+        if (res.success) {
+          setImageUrl(res.data.imageUrl);
+          const newData = {
+            ...res.data,
+            reactions: [],
+            image: null,
+          };
+          console.log(res.data);
+          setPosts((prevPosts) => [...prevPosts, newData]);
+          setContent("");
+        } else {
+          console.log("Yükləmə uğursuz oldu!");
+        }
       }
     } catch (error) {
       console.error("Upload Hatası:", error);
@@ -87,7 +92,8 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
                     variant="destructive"
                     size="icon"
                     className="absolute top-2 right-2"
-                    onClick={() => setImage(null)}>
+                    onClick={() => setImage(null)}
+                  >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
@@ -99,7 +105,8 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => fileInputRef.current.click()}>
+            onClick={() => fileInputRef.current.click()}
+          >
             <Image className="mr-2 h-4 w-4" />
             Add Image
           </Button>

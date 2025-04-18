@@ -32,7 +32,7 @@ import ShareDialog from "./share-dialog";
 import ReactionPicker from "./reaction-picker";
 
 const Post = ({
-  id,
+  _id,
   title,
   content,
   image,
@@ -47,20 +47,7 @@ const Post = ({
 }) => {
   const [showComments, setShowComments] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  console.log({
-    id,
-    title,
-    content,
-    image,
-    user,
-    reactions,
-    comments,
-    currentUser,
-    onEdit,
-    onDeleteConfirm,
-    onReact,
-    onAddComment,
-  });
+
   const currentUserReaction = reactions.find(
     (r) => r.user === currentUser
   )?.type;
@@ -70,7 +57,7 @@ const Post = ({
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar>
           <AvatarImage src={user?.avatar} alt={user?.userName} />
-          <AvatarFallback>{user?.userName.charAt(0)}</AvatarFallback>
+          <AvatarFallback>{user?.userName?.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="w-full">
           <h2 className="text-sm font-semibold">{user?.userName}</h2>
@@ -88,11 +75,16 @@ const Post = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => onEdit?.({ id, title, content, image })}>
+                onClick={() => onEdit?.({ _id, title, content, image })}
+              >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDeleteConfirm?.(id)}>
+              <DropdownMenuItem
+                onClick={() => {
+                  alert(_id);
+                }}
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -120,14 +112,16 @@ const Post = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowComments(!showComments)}>
+            onClick={() => setShowComments(!showComments)}
+          >
             <MessageCircle className="mr-2 h-4 w-4" />
             Comment ({comments.length})
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsShareDialogOpen(true)}>
+            onClick={() => setIsShareDialogOpen(true)}
+          >
             <Share2 className="mr-2 h-4 w-4" />
             Share
           </Button>

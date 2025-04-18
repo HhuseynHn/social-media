@@ -7,7 +7,6 @@ export const axiosInstance = axios.create({
   timeout: 10000, // Timeout in milliseconds
   headers: {
     "Content-Type": "application/json",
-    Authorization: localStorage.getItem("token"),
   },
 });
 
@@ -16,7 +15,6 @@ export const axiosInstanceWithFormData = axios.create({
   timeout: 10000, // Timeout in milliseconds
   headers: {
     "Content-Type": "multipart/form-data",
-    Authorization: localStorage.getItem("token"),
   },
 });
 
