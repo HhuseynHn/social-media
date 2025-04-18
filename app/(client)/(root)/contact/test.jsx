@@ -4,21 +4,19 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 
 const Test = () => {
-  const [count, setCount] = useState(0);
-  const [calculation, setCalculation] = useState(0);
-  useEffect(() => {
-    let timer = setTimeout(() => {
-      setCount((count) => count + 1);
-    }, 1000);
+  function finFactrial(num) {
+    if (num === 0) return 1;
 
-    console.log("in");
-    return () => clearTimeout(timer);
-  }, []);
+    console.log("before num", num);
+    let factorial = num * finFactrial(num - 1);
+    // console.log("after", num);
+    return factorial;
+  }
+  finFactrial(5);
+
   return (
     <>
       <div>Test</div>
-      <div>Count: {count}</div>
-      <button onClick={(c) => setCount((c) => c + 1)}>Increase +</button>
     </>
   );
 };

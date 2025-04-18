@@ -2,6 +2,7 @@
 
 import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
+import userModel from "@/model/user-model";
 export async function middleware(request) {
   const token = request.cookies.get("token")?.value;
   console.log("TOKEN", token);
@@ -19,7 +20,18 @@ export async function middleware(request) {
 
   try {
     const { payload } = await jwtVerify(token, secret);
+    const checkUser = await userModel.findById(payload.id);
 
+    if (!checkUser) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+    console.log("payload", payload);
     // Add new header
     const newHeaders = new Headers(request.headers);
     newHeaders.set("user-id", payload.id);
@@ -46,5 +58,6 @@ export const config = {
   matcher: [
     "/api/v1/posts", // Matches /api/v1/posts
     "/api/v1/posts/:path*", // Matches dynamic routes like /api/v1/posts/something
+    "/api/v1/users/me/:path*", // Matches dynamic routes like /api/v1/posts/something
   ],
 };

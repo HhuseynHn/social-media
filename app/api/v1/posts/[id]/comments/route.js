@@ -33,7 +33,7 @@ export async function GET(request, { params }) {
       {
         success: false,
         details: error,
-        error: "Error to be happen",
+        error: "Error to be happen, when get the all comments",
       },
       {
         status: 500,
@@ -76,7 +76,7 @@ export async function POST(request, { params }) {
     return NextResponse.json(
       {
         success: false,
-        message: "Error to be happen",
+        message: "Error to be happen, when created the comment",
       },
       {
         status: 500,

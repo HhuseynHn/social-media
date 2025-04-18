@@ -39,7 +39,7 @@ export async function GET(request, { params }) {
       {
         success: false,
         details: error,
-        error: "To be happen error",
+        error: "To be happen error, when fethed only one comment",
       },
       { status: 500 }
     );
@@ -80,7 +80,7 @@ export async function DELETE(request, { params }) {
       {
         success: false,
         details: error,
-        error: "To be happen error",
+        error: "To be happen error, when delete the comment",
       },
       { status: 500 }
     );
@@ -127,7 +127,7 @@ export async function PATCH(request, { params }) {
       {
         success: false,
         details: error,
-        error: "To be happen error",
+        error: "To be happen error, when updated the comment",
       },
       { status: 500 }
     );
