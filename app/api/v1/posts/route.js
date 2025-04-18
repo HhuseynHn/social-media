@@ -52,6 +52,8 @@ export async function POST(request) {
     const title = formData.get("title");
     let imageUrl = null;
 
+    console.log("_______________________-----");
+    console.log(file);
     //If recieve the file from server also to write the cloud for don't send null
 
     if (file) {
@@ -63,15 +65,33 @@ export async function POST(request) {
         "base64"
       )}`;
 
-      //Upload to cloudinary
-      imageUrl = await cloudinary.v2.uploader.upload(base64Image, {
-        folder: "uploads",
-      });
+      try {
+        const uploadResponse = await cloudinary.v2.uploader.upload(
+          base64Image,
+          {
+            folder: "uploads",
+          }
+        );
+
+        imageUrl = uploadResponse.secure_url;
+
+        console.log(
+          "Cloudinary bağlantısı uğurludur:",
+          uploadResponse.secure_url
+        );
+      } catch (error) {
+        console.error("Cloudinary bağlantı xətası:", error);
+      }
     }
 
     const savedPost = await postModel.create({
+<<<<<<< HEAD
+      title,
+      imageUrl: imageUrl,
+=======
       title: title ? title : null,
       imageUrl: file ? imageUrl.secure_url : null,
+>>>>>>> bf1b13f57128a4c730c4d05ceeb9dcf679c39359
       user,
     });
 

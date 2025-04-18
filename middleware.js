@@ -4,8 +4,9 @@ import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 import userModel from "@/model/user-model";
 export async function middleware(request) {
-  const token = request.headers.get("Authorization");
+  const token = request.cookies.get("token")?.value;
   console.log("TOKEN", token);
+  console.log("_____________________)))_)_)_)))))))");
   if (!token) {
     return NextResponse.json(
       {

@@ -19,10 +19,11 @@ export default function PostLayout() {
   const [postToDelete, setPostToDelete] = useState(null);
 
   useEffect(() => {
+    console.log("men render oluraam in post useffect");
     getPosts()
       .then((data) => {
         if (data.success) {
-          console.log("Post Layout useEffect Data-", data.data);
+          console.log("Data-", data.data);
 
           const transformData = data.data.map((e) => {
             return {
@@ -71,7 +72,6 @@ export default function PostLayout() {
   };
 
   const handleDeleteConfirm = (postId) => {
-    console.log("onConfrim == postID - ", postId);
     setPostToDelete(postId);
     setIsDeleteDialogOpen(true);
   };
@@ -146,9 +146,10 @@ export default function PostLayout() {
   return (
     <main className="flex min-h-screen flex-col items-center p-6">
       <CreatePost
-        onCreatePost={handleCreatePost}
         currentUser={currentUser}
         userAvatar={userAvatar}
+        setPosts={setPosts}
+        posts={posts}
       />
 
       {posts.map((post) => (

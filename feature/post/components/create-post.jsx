@@ -15,44 +15,20 @@ import {
 } from "@/common/components";
 import { Image, X } from "lucide-react";
 import { postPost } from "../services/post-service";
+import { useRouter } from "next/navigation";
 
-const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
+const CreatePost = ({ currentUser, userAvatar, setPosts, posts }) => {
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const fileInputRef = useRef(null);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (content.trim() || image) {
-      const formData = new FormData();
-      if (content) {
-        formData.append("title", content);
-        // formData.append("timeStamp", new Date().toLocaleString());
-      }
-
-      if (image) {
-        formData.append("file", image);
-      }
-
-      try {
-        const res = await postPost(formData);
-
-        if (res.success) {
-          // onCreatePost(content, imageUrl || res.data.imageUrl);
-          onCreatePost(
-            content,
-            res.data.imageUrl,
-            new Date().toLocaleDateString()
-          );
-          setContent("");
-          setImage(null);
-        } else {
-          console.log("uploaded post failed");
-        }
-      } catch (error) {
-        console.error("create post error:", error);
-      }
+      onCreatePost(content, image);
+      setContent("");
+      setImage(null);
     }
   };
 
@@ -88,23 +64,23 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
   // const handleUpload = async (e) => {
   //   e.preventDefault();
 
-  //   const formData = new FormData();
-  //   console.log("Formdata", formData);
-  //   formData.append("file", image);
-  //   formData.append("title", content.trim());
-  //   try {
-  //     const res = await postPost(formData);
-  //     console.log("res", res);
-  //     if (res.success) {
-  //       setImageUrl(res.data.imageUrl);
-  //       console.log("imgURL", imageUrl);
-  //     } else {
-  //       console.log("Yükləmə uğursuz oldu!");
-  //     }
-  //   } catch (error) {
-  //     console.error("Upload Hatası:", error);
-  //   }
-  // };
+    const formData = new FormData();
+    formData.append("file", image);
+    formData.append("title", content.trim());
+    console.log("Formdata", formData);
+    try {
+      const res = await postPost(formData);
+      console.log("res", res);
+      if (res.success) {
+        setImageUrl(res.data.imageUrl);
+        console.log("imgURL", imageUrl);
+      } else {
+        console.log("Yükləmə uğursuz oldu!");
+      }
+    } catch (error) {
+      console.error("Upload Hatası:", error);
+    }
+  };
 
   return (
     <Card className="w-full max-w-2xl mb-6">
@@ -134,7 +110,8 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
                     variant="destructive"
                     size="icon"
                     className="absolute top-2 right-2"
-                    onClick={() => setImage(null)}>
+                    onClick={() => setImage(null)}
+                  >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
@@ -146,7 +123,8 @@ const CreatePost = ({ onCreatePost, currentUser, userAvatar }) => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => fileInputRef.current.click()}>
+            onClick={() => fileInputRef.current.click()}
+          >
             <Image className="mr-2 h-4 w-4" />
             Add Image
           </Button>

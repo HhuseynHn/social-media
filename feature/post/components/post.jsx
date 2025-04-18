@@ -32,8 +32,7 @@ import ShareDialog from "./share-dialog";
 import ReactionPicker from "./reaction-picker";
 
 const Post = ({
-  setPostToDelete,
-  _id,
+  id,
   title,
   content,
   image,
@@ -59,7 +58,7 @@ const Post = ({
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar>
           <AvatarImage src={user?.avatar} alt={user?.userName} />
-          <AvatarFallback>{user?.userName.charAt(0)}</AvatarFallback>
+          <AvatarFallback>{user?.userName?.charAt(0)}</AvatarFallback>
         </Avatar>
         <h2 className="text-sm font-semibold">{user?.userName}</h2>
         <div className="w-full">
@@ -77,15 +76,12 @@ const Post = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => onEdit?.({ _id, title, content, image })}>
+                onClick={() => onEdit?.({ id, title, content, image })}
+              >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  onDeleteConfirm(_id);
-                  setPostToDelete(_id);
-                }}>
+              <DropdownMenuItem onClick={() => onDeleteConfirm?.(id)}>
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -113,14 +109,16 @@ const Post = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowComments(!showComments)}>
+            onClick={() => setShowComments(!showComments)}
+          >
             <MessageCircle className="mr-2 h-4 w-4" />
             Comment ({comments.length})
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsShareDialogOpen(true)}>
+            onClick={() => setIsShareDialogOpen(true)}
+          >
             <Share2 className="mr-2 h-4 w-4" />
             Share
           </Button>
@@ -131,7 +129,8 @@ const Post = ({
             {comments.map((comment, index) => (
               <div
                 key={comment._id}
-                className="flex items-start space-x-2 mb-2">
+                className="flex items-start space-x-2 mb-2"
+              >
                 <Avatar className="w-8 h-8">
                   <AvatarImage src={comment.avatar} />
                   <AvatarFallback>{comment.user.charAt(0)}</AvatarFallback>
