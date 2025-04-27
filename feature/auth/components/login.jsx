@@ -67,22 +67,22 @@ export const Login = () => {
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your User Name below to login to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-5">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="userName">User Name</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  {...register("email")}
+                  id="userName"
+                  type="userName"
+                  placeholder="UserName"
+                  {...register("userName")}
                 />
-                {errors.email && (
-                  <ValidationError>{errors.email.message}</ValidationError>
+                {errors.userName && (
+                  <ValidationError>{errors.userName.message}</ValidationError>
                 )}
               </div>
 

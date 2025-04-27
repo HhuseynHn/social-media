@@ -4,12 +4,15 @@ import { axiosInstance } from "@/config/axios-config";
 
 export const authLogin = async (body) => {
   try {
-    const response = await axiosInstance.post("/auth/login", body);
+    const response = await axiosInstance.post("/auth/login", body, {
+      withCredentials: true,
+    });
     const data = response.data;
 
-    if (data.success) {
+    if (response.status == 200) {
       return {
         success: true,
+        message: data.message,
       };
     } else {
       return {
@@ -28,21 +31,14 @@ export const authLogin = async (body) => {
 export const authRegister = async (body) => {
   try {
     const response = await axiosInstance.post("/auth/register", body);
-    const data = response.data;
-
-    if (data.success) {
-      localStorage.setItem("token", data.token);
+    if (response.status == 201) {
       return {
         success: true,
-      };
-    } else {
-      return {
-        success: false,
-        message: data.message,
+        message: response.data.message,
       };
     }
   } catch (error) {
-    console.log("ERR", error.response.data.message);
+    console.log("ERR", error.response);
     return {
       success: false,
       message: error.response.data.message || error.message,

@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   Dialog,
@@ -20,19 +20,40 @@ import {
   Input,
 } from "@/common/components";
 import { Camera, Pencil, Trash2, X } from "lucide-react";
+import {
+  deleteUser,
+  getMe,
+  updateAvatar,
+  updateBackground,
+  updateUser,
+} from "../services/profile-service";
+
+import defaultProfile from "../images/default-profile.jpg";
+import defaultBgc from "../images/default-bgc.jpg";
+import { deletePost } from "@/feature/post/services/post-service";
+import { useRouter } from "next/navigation";
 
 export default function Profile() {
+  const router = useRouter();
+  const [user, setUser] = useState({
+    userName: "",
+    bio: "",
+    title: "",
+    location: "",
+    avatar: "",
+    backgroundCover: "",
+  });
+  useEffect(() => {
+    getMe().then((res) => {
+      setUser({
+        ...user,
+        ...res.data,
+      });
+    });
+  }, []);
+
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [profile, setProfile] = useState({
-    name: "Sarah Johnson",
-    title: "Senior Product Designer",
-    bio: "I'm a product designer with over 2 years of experience creating user-centered digital experiences. I specialize in UX/UI design, user research, and design systems.",
-    location: "San Francisco, CA",
-    email: "sarah.johnson@example.com",
-    profileImage: "/image/logo/myImg.jpg",
-    backgroundImage: "/image/logo/bckImgPrfl.jpg",
-  });
 
   const [newProfileImage, setNewProfileImage] = useState(null);
   const [newBackgroundImage, setNewBackgroundImage] = useState(null);
@@ -41,23 +62,38 @@ export default function Profile() {
     setIsEditing(true);
   };
 
-  const handleDeleteProfile = () => {
-    setIsDeleteDialogOpen(false);
-  };
-
-  const handleProfileImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const imageUrl = URL.createObjectURL(file);
-      setNewProfileImage(imageUrl);
+  const handleDeleteProfile = async () => {
+    const { success } = await deleteUser();
+    if (success) {
+      setIsDeleteDialogOpen(false);
+      router.push("/register");
     }
   };
 
-  const handleBackgroundImageChange = (e) => {
+  const handleProfileImageChange = async (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const imageUrl = URL.createObjectURL(file);
-      setNewBackgroundImage(imageUrl);
+      const { success, data } = await updateAvatar(file);
+      if (success) {
+        setUser({
+          ...user,
+          avatar: data.avatar,
+        });
+      }
+    }
+  };
+
+  const handleBackgroundImageChange = async (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      const { success, data } = await updateBackground(file);
+      if (success) {
+        setUser({
+          ...user,
+          backgroundCover: data.backgroundCover,
+        });
+      }
     }
   };
 
@@ -69,14 +105,21 @@ export default function Profile() {
     setNewBackgroundImage(null);
   };
 
-  const handleSaveProfile = () => {
-    setProfile({
-      ...profile,
-      profileImage: newProfileImage || profile.profileImage,
-      backgroundImage: newBackgroundImage || profile.backgroundImage,
-    });
-    setNewProfileImage(null);
-    setNewBackgroundImage(null);
+  const handleSaveProfile = async () => {
+    // setProfile({
+    //   ...profile,
+    // });
+
+    //sanki yeni obj yarandi amma  bi, pi sildi. ve rest obj menimsetdi.
+    const { backgroundCover, _id, __v, avatar, ...rest } = user;
+
+    const { success, data } = await updateUser(rest);
+    if (success) {
+      setUser({
+        ...user,
+        ...data.data,
+      });
+    }
     setIsEditing(false);
   };
 
@@ -85,7 +128,7 @@ export default function Profile() {
       <Card className="w-full mx-auto overflow-hidden">
         <div className="relative h-48 sm:h-64 w-full group">
           <Image
-            src={newBackgroundImage || profile.backgroundImage}
+            src={user.backgroundCover.url || defaultBgc}
             alt="Profile background"
             fill
             className="object-cover"
@@ -95,7 +138,8 @@ export default function Profile() {
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
             <label
               htmlFor="background-image-upload"
-              className="cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
+              className="cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+            >
               <div className="bg-background rounded-full p-2">
                 <Camera className="h-6 w-6" />
               </div>
@@ -110,7 +154,8 @@ export default function Profile() {
             {newBackgroundImage && (
               <button
                 onClick={handleCancelBackgroundImage}
-                className="absolute top-2 right-2 bg-background rounded-full p-1">
+                className="absolute top-2 right-2 bg-background rounded-full p-1"
+              >
                 <X className="h-4 w-4" />
               </button>
             )}
@@ -121,7 +166,7 @@ export default function Profile() {
           <div className="absolute -top-16 left-6 border-4 border-background rounded-full group">
             <div className="relative w-32 h-32">
               <Image
-                src={newProfileImage || profile.profileImage}
+                src={user.avatar.url || defaultProfile}
                 alt="Profile picture"
                 width={128}
                 height={128}
@@ -130,7 +175,8 @@ export default function Profile() {
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all rounded-full flex items-center justify-center">
                 <label
                   htmlFor="profile-image-upload"
-                  className="cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
+                  className="cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                >
                   <div className="bg-background rounded-full p-2">
                     <Camera className="h-5 w-5" />
                   </div>
@@ -145,7 +191,8 @@ export default function Profile() {
                 {newProfileImage && (
                   <button
                     onClick={handleCancelProfileImage}
-                    className="absolute bottom-0 right-0 bg-background rounded-full p-1">
+                    className="absolute bottom-0 right-0 bg-background rounded-full p-1"
+                  >
                     <X className="h-4 w-4" />
                   </button>
                 )}
@@ -161,18 +208,21 @@ export default function Profile() {
               variant="outline"
               size="sm"
               className="flex items-center gap-1"
-              onClick={handleEditProfile}>
+              onClick={handleEditProfile}
+            >
               <Pencil className="h-4 w-4" />
               Edit Profile
             </Button>
             <Dialog
               open={isDeleteDialogOpen}
-              onOpenChange={setIsDeleteDialogOpen}>
+              onOpenChange={setIsDeleteDialogOpen}
+            >
               <DialogTrigger asChild>
                 <Button
                   variant="destructive"
                   size="sm"
-                  className="flex items-center gap-1">
+                  className="flex items-center gap-1"
+                >
                   <Trash2 className="h-4 w-4" />
                   Delete Profile
                 </Button>
@@ -190,7 +240,8 @@ export default function Profile() {
                 <DialogFooter>
                   <Button
                     variant="outline"
-                    onClick={() => setIsDeleteDialogOpen(false)}>
+                    onClick={() => setIsDeleteDialogOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button variant="destructive" onClick={handleDeleteProfile}>
@@ -209,9 +260,9 @@ export default function Profile() {
                 <Label htmlFor="name">Name</Label>
                 <Input
                   id="name"
-                  value={profile.name}
+                  value={user.userName}
                   onChange={(e) =>
-                    setProfile({ ...profile, name: e.target.value })
+                    setUser({ ...user, userName: e.target.value })
                   }
                 />
               </div>
@@ -219,20 +270,16 @@ export default function Profile() {
                 <Label htmlFor="title">Title</Label>
                 <Input
                   id="title"
-                  value={profile.title}
-                  onChange={(e) =>
-                    setProfile({ ...profile, title: e.target.value })
-                  }
+                  value={user.title}
+                  onChange={(e) => setUser({ ...user, title: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="bio">Bio</Label>
                 <Textarea
                   id="bio"
-                  value={profile.bio}
-                  onChange={(e) =>
-                    setProfile({ ...profile, bio: e.target.value })
-                  }
+                  value={user.bio}
+                  onChange={(e) => setUser({ ...user, bio: e.target.value })}
                   rows={4}
                 />
               </div>
@@ -240,20 +287,9 @@ export default function Profile() {
                 <Label htmlFor="location">Location</Label>
                 <Input
                   id="location"
-                  value={profile.location}
+                  value={user.location}
                   onChange={(e) =>
-                    setProfile({ ...profile, location: e.target.value })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={profile.email}
-                  onChange={(e) =>
-                    setProfile({ ...profile, email: e.target.value })
+                    setUser({ ...user, location: e.target.value })
                   }
                 />
               </div>
@@ -264,25 +300,19 @@ export default function Profile() {
           ) : (
             <div className="space-y-4">
               <div>
-                <h1 className="text-2xl font-bold">{profile.name}</h1>
-                <p className="text-muted-foreground">{profile.title}</p>
+                <h1 className="text-2xl font-bold">{user?.userName}</h1>
+                <p className="text-muted-foreground">{user?.title}</p>
               </div>
               <div>
                 <h2 className="text-lg font-semibold mb-2">About</h2>
-                <p className="text-muted-foreground">{profile.bio}</p>
+                <p className="text-muted-foreground">{user?.bio}</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                 <div>
                   <h3 className="text-sm font-medium text-muted-foreground">
                     Location
                   </h3>
-                  <p>{profile.location}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    Email
-                  </h3>
-                  <p>{profile.email}</p>
+                  <p>{user?.location}</p>
                 </div>
               </div>
             </div>

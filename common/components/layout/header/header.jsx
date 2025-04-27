@@ -3,19 +3,22 @@
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Bell from "../../icons/bell";
 import Message from "../../icons/message";
 import LanguageSwitch from "../../language-switch";
 import Account from "../../profile-account";
 import SearchBar from "../../search-bar";
 import { ModeToggle } from "../../theme/mode-togle";
+import { getMe } from "@/feature/profile/services/profile-service";
 export const Header = ({ className = "" }) => {
   const { theme } = useTheme();
+
   return (
     <>
       <header
-        className={`bg-whitedark:bg-zinc-950 dark:text-white shadow border ${className} `}>
+        className={`bg-whitedark:bg-zinc-950 dark:text-white shadow border ${className} `}
+      >
         <div className="flex justify-between items-center">
           <div className="flex gap-x-4 items-center">
             <div className="relative w-11 h-11">

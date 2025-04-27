@@ -43,8 +43,9 @@ export const Register = () => {
       });
       return;
     }
-
-    const response = await authRegister(data);
+    const { userName, password } = data;
+    const body = { userName, password };
+    const response = await authRegister(body);
     // // console.log("response =", response);
     if (response.success) {
       toast("✅ Register successful! Redirecting...", {
@@ -79,21 +80,8 @@ export const Register = () => {
                   placeholder="User name"
                   {...register("userName")}
                 />
-                {errors.email && (
+                {errors.userName && (
                   <ValidationError>{errors.userName.message}</ValidationError>
-                )}
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <ValidationError>{errors.email.message}</ValidationError>
                 )}
               </div>
 
@@ -116,7 +104,7 @@ export const Register = () => {
                   type="password"
                   {...register("repeatPassword")}
                 />
-                {errors.password && (
+                {errors.repeatPassword && (
                   <ValidationError>
                     {errors.repeatPassword.message}
                   </ValidationError>

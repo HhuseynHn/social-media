@@ -1,7 +1,11 @@
 /** @format */
 module.exports = {
   images: {
-    domains: ["cdn-icons-png.flaticon.com", "9to5mac.com"],
+    domains: [
+      "cdn-icons-png.flaticon.com",
+      "9to5mac.com",
+      "res.cloudinary.com",
+    ],
   },
   i18n: {
     // These are all the locales you want to support in

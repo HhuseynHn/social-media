@@ -1,7 +1,7 @@
 /** @format */
 
 import React from "react";
-import PostLayout from "../post/components/post-layout";
+import PostLayout from "../../post/components/post-layout";
 import Profile from "./profile";
 
 const ProfileLayout = () => {
